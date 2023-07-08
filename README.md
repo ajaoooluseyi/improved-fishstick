@@ -22,19 +22,19 @@ In the projects' working directory execute the below command to create a virtual
 
  
 ```python
-$ virtualenv venv
+$ py -m venv venv
 ```
 
 To activate the virtual environment, execute the below command.
 
 ```python
-$ source venv/Script/activate
+$ source venv/Scripts/activate
 ```
 Clone this repository in the projects' working directory by executing the command below.
 
 ```python
-$ git clone https://github.com/ajaoooluseyi/flask-ums.git
-$ cd flask-ums
+$ git clone https://github.com/ajaoooluseyi/improved-fishstick.git
+$ cd improved-fishstick
 ```
 
 To install all the required dependencies execute the below command.
