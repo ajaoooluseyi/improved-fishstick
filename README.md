@@ -3,7 +3,7 @@
 ### Description
 This is a REST Api built with Flask. It is a User management system with CRUD operations.
 
-### DEpendencies
+### Dependencies
 * Flask
 * PyMongo
 * Docker
