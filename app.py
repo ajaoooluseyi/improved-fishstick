@@ -1,6 +1,7 @@
-from bson import ObjectId
 from flask import Flask, jsonify, request
 from pymongo import MongoClient
+from bson import ObjectId
+import json
 
 app = Flask(__name__)
 client = MongoClient("mongodb://localhost:27017/")
@@ -9,15 +10,13 @@ collection = db["users"]
 
 
 class User:
-    def __init__(self, id, name, email, password):
-        self.id = id
+    def __init__(self, name, email, password):
         self.name = name
         self.email = email
         self.password = password
 
     def to_dict(self):
         return {
-            "id": self.id,
             "name": self.name,
             "email": self.email,
             "password": self.password,
@@ -26,7 +25,6 @@ class User:
 
 def user_from_dict(user_dict):
     return User(
-        id=user_dict["_id"],
         name=user_dict["name"],
         email=user_dict["email"],
         password=user_dict["password"],
@@ -36,20 +34,19 @@ def user_from_dict(user_dict):
 # Get all users
 @app.route("/users", methods=["GET"])
 def get_all_users():
-    users = []
-    for user_dict in collection.find():
-        user = user_from_dict(user_dict)
-        users.append(user.to_dict())
+    users = list(collection.find())
+    for user in users:
+        user["_id"] = str(user["_id"])
     return jsonify(users)
 
 
 # Get a user by ID
 @app.route("/users/<id>", methods=["GET"])
 def get_user(id):
-    user_dict = collection.find_one({"_id": ObjectId(id)})
-    if user_dict:
-        user = user_from_dict(user_dict)
-        return jsonify(user.to_dict())
+    user = collection.find_one({"_id": ObjectId(str(id))})
+    if user:
+        user["_id"] = str(user["_id"])
+        return json.dumps(user, default=str)
     else:
         return jsonify({"error": "User not found"}), 404
 
@@ -64,11 +61,15 @@ def create_user():
         or "password" not in user_data
     ):
         return jsonify({"error": "Missing required fields"}), 400
-    user = User(None, user_data["name"], user_data["email"], user_data["password"])
+    user = User(
+        name=user_data["name"],
+        email=user_data["email"],
+        password=user_data["password"],
+    )
     user_dict = user.to_dict()
     user_id = collection.insert_one(user_dict).inserted_id
-    user.id = str(user_id)
-    return jsonify(user.to_dict())
+    user_dict["_id"] = str(user_id)
+    return jsonify(user_dict)
 
 
 # Update a user by ID
@@ -81,11 +82,11 @@ def update_user(id):
         or "password" not in user_data
     ):
         return jsonify({"error": "Missing required fields"}), 400
-    result = collection.update_one({"_id": ObjectId(id)}, {"$set": user_data})
+    result = collection.update_one({"_id": ObjectId(str(id))}, {"$set": user_data})
     if result.modified_count:
-        user_dict = collection.find_one({"_id": ObjectId(id)})
-        user = user_from_dict(user_dict)
-        return jsonify(user.to_dict())
+        user = collection.find_one({"_id": ObjectId(str(id))})
+        user["_id"] = str(user["_id"])
+        return json.dumps(user, default=str)
     else:
         return jsonify({"error": "User not found"}), 404
 
@@ -93,7 +94,7 @@ def update_user(id):
 # Delete a user by ID
 @app.route("/users/<id>", methods=["DELETE"])
 def delete_user(id):
-    result = collection.delete_one({"_id": ObjectId(id)})
+    result = collection.delete_one({"_id": ObjectId(str(id))})
     if result.deleted_count:
         return jsonify({"message": "User deleted successfully"})
     else:
