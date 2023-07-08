@@ -3,6 +3,12 @@
 ### Description
 This is a REST Api built with Flask. It is a User management system with CRUD operations.
 
+### Dependencies
+* Flask
+* PyMongo
+* Docker
+* Python 3.10+
+
 _Instructions to run_
 
 On the terminal execute the below command to create the projects' working directory and move into that directory.
@@ -44,4 +50,12 @@ $ FLASK_APP = app
 $ FLASK_ENV = development
 
 $ flask run 
+```
+To build app Docker Image:
+```cmd
+$ docker build -t flask-mongo-app .
+```
+Once the image is built, run the Docker container using the following command:
+```cmd
+docker run -d -p 5000:5000 --name flask-mongo-container flask-mongo-app
 ```
