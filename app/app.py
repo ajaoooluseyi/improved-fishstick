@@ -53,12 +53,10 @@ class UserListResource(Resource):
     def get(self):
         users = list(collection.find())
         serialized_users = [{**user, "_id": str(user["_id"])} for user in users]
-        print(serialized_users)
         return serialized_users, 200
 
     def post(self):
         user_data = request.get_json()
-        print(user_data)
         new_user = {
             "id": str(uuid.uuid4()),
             "name": user_data["name"],
