@@ -5,6 +5,7 @@ This is a REST Api built with Flask. It is a User management system with CRUD op
 
 ### Dependencies
 * Flask
+* Flask-RESTful
 * PyMongo
 * Docker
 * Python 3.10+
@@ -55,3 +56,4 @@ To build app Docker Container:
 ```cmd
 $ docker-compose up
 ```
+
