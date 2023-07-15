@@ -51,11 +51,7 @@ $ FLASK_ENV = development
 
 $ flask run 
 ```
-To build app Docker Image:
+To build app Docker Container:
 ```cmd
-$ docker build -t flask-mongo-app .
-```
-Once the image is built, run the Docker container using the following command:
-```cmd
-docker run -d -p 5000:5000 --name flask-mongo-container flask-mongo-app
+$ docker-compose up
 ```
